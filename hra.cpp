@@ -5,8 +5,8 @@ struct Postava{
 string jmeno;
 int MaxZivoty;
 int zivoty;
-int MaxMana;
-int mana;
+int MaxEnergie;
+int energie;
 int sila utoku;
 int zlato;
 int uroven;
@@ -21,8 +21,9 @@ int main(){
     cin >> vstup;
 
     if(start != 1) {
-        cout << "Srabe namas odvahu projit strasidlelnym lesem :) tak se snad uvidime brzy.";
+        cout << "Srabe namas odvahu projit strasidlelnym lesem :) tak se snad brzy uvidime.";
     }
+    cout << "Vyber si na jaky urovni chces hrat" <<endl;
     Postava urovne[4];
 
     uroven[0].jmeno
