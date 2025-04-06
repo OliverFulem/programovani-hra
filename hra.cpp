@@ -23,7 +23,7 @@ int main(){
     if(start != 1) {
         cout << "Srabe namas odvahu projit strasidlelnym lesem :) tak se snad brzy uvidime.";
     }
-    cout << "Vyber si na jaky urovni chces hrat" <<endl;
+    cout << "Vyber si na jaky urovni chces hrat  ddddd" <<endl;
     Postava urovne[4];
 
     uroven[0].jmeno
