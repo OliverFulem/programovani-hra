@@ -1,36 +1,31 @@
 #include <iostream>
 #include <string>
-using namespace std;
-struct schpnost{
-string nazev;
-int utok;
-int zivoty;
-int ubranienergie;
-}
+// using namespace std;
+
+struct schopnost{
+    std::string nazev;
+    int utok;
+    int zivoty;
+    int ubranienergie;
+};
 
 struct Postava{
-string jmeno;
-int MaxZivoty;
-int zivoty;
-int MaxEnergie;
-int energie;
-int sila utoku;
-int zlato;
-int uroven;
-int zkusenosti;
-schopnost schopnosti[2]
-}
+    std::string jmeno;
+    int MaxZivoty;
+    int zivoty;
+    int MaxEnergie;
+    int energie;
+    int silautoku;
+    int zlato;
+    int uroven;
+    int zkusenosti;
+    schopnost schopnosti[2];
+};
 
-struct schpnost{
-string nazev;
-int utok;
-int zivoty;
-int ubranienergie;
-}
 int main(){
     int vstup;
-    cout << "Vytejte ve hre plne dobrodruzstvi" << endl;
-    cout << "Tvim cilem bude projit lesem kde potkas mnoho bytosti, pres ktere se musis dostat do kralovstvi." << endl;
+    std::cout << "Vytejte ve hre plne dobrodruzstvi" << std::endl;
+    std::cout << "Tvim cilem bude projit lesem kde potkas mnoho bytosti, pres ktere se musis dostat do kralovstvi." << endl;
     cout << "Pokud si chcete hru zahrat tak stisknete 1 pokud ne tak stisknete cokoliv jineho" << endl;
     cin >> vstup;
 
@@ -87,11 +82,6 @@ int main(){
     Charakter[3].uroven = 1;
     Charakter[3].schopnosti[0] = {"rana ze zadu", 3, 2};
     Charakter[3].schopnosti[1] = {"vypaleni svetlem", 2, 1};
-
-
-
-
-
 
 }
 
