@@ -2,6 +2,18 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "ensure-build-dir",
+      "type": "shell",
+      "command": "if (-not (Test-Path -Path \"${workspaceFolder}\\build\")) { New-Item -ItemType Directory -Path \"${workspaceFolder}\\build\" -Force | Out-Null }",
+      "presentation": {
+        "reveal": "never",
+        "showReuseMessage": false,
+        "echo": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "clang build",
       "type": "shell",
       "command": "clang++",
@@ -17,7 +29,10 @@
         "isDefault": true
       },
       "problemMatcher": ["$gcc"],
-      "detail": "Build with Clang"
+      "detail": "Build with Clang",
+      "dependsOn": [
+        "ensure-build-dir"
+      ]
     }
   ]
 }
