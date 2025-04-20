@@ -5,7 +5,6 @@
 struct schopnost{
     std::string nazev;
     int utok;
-    int zivoty;
     int ubranienergie;
 };
 
@@ -22,7 +21,24 @@ struct Postava{
     schopnost schopnosti[2];
 };
 
-int main(){
+void statistiky(Postava hrac){
+    std:: cout << "Charakter: " << hrac.jmeno << std:: endl;
+    std:: cout << "Zivoty: " << hrac.zivoty << "/" << hrac.MaxZivoty << std:: endl;
+    std:: cout << "Mana: " << hrac.energie << "/" << hrac.MaxEnergie << std:: endl;
+    std:: cout << "Utok: " << hrac.silautoku << std:: endl;
+    std:: cout << "Level: " << hrac.uroven << " Zkusenosti: " << hrac.zkusenosti << " Zlato: " << hrac.zlato << std:: endl;
+    std:: cout << "Schopnosti:" << std::  endl;
+    for (int i = 0; i < 3; i++) {
+        std:: cout << " " << hrac.schopnosti[i].nazev << " utok: " << hrac.schopnosti[i].utok << ", Mana: " << hrac.schopnosti[i].ubranienergie << ")" << std:: endl;
+    }
+}
+
+
+void vylepsenipostava(Postava hrac){
+    
+}
+
+int main () {
     int vstup;
 
     std::cout << "Vytejte ve hre plne dobrodruzstvi" << std::endl;
@@ -32,12 +48,12 @@ int main(){
 
     if(vstup != 1) {
         std::cout << "Srabe namas odvahu projit strasidlelnym lesem : tak se snad brzy uvidime.";
+        //retur 0;
     }
     
     std::cout << "Vyber si za koho chces hrat " << std::endl;
     std::cout << "Ale pozor kazda postava ma jiny pocet energi a zivotu" << std::endl;
-    std::cout << "Postavy jsou serazeny od nejlehci po nejtezsi" << std::endl;
-
+    std::cout << "Postavy jsou serazeny od nejlehci po nejtezsi" << std::endl;   
     Postava Charakter[4];
 
     Charakter[0].jmeno = "Cajda";
@@ -51,7 +67,7 @@ int main(){
     Charakter[0].schopnosti[0] = {"podpasovka", 3, 1};
     Charakter[0].schopnosti[1] = {"loketni vrazda", 4, 2};
 
-    Charakter[1].jmeno = "Cajda";
+    Charakter[1].jmeno = "Tufo";
     Charakter[1].MaxZivoty = 6;
     Charakter[1].zivoty= 6;
     Charakter[1].MaxEnergie = 6;
@@ -84,5 +100,15 @@ int main(){
     Charakter[3].schopnosti[0] = {"rana ze zadu", 3, 2};
     Charakter[3].schopnosti[1] = {"vypaleni svetlem", 2, 1};
 
-}
+int vyberpostavy;
+do{
+    std:: cout << "Vyber si za koho chces hrat";
+    std:: cout << ", ale pozor jak uz jsem se zminoval, tak kazda postva umi neco jineho" << std:: endl;
+    std:: cout << "Mas tedy na vyber mezi" << " : " << "Cajdou, Tufem, Dratenkou a Mazakem";
+    std:: cin >> vyberpostavy;
+    } while (vyberpostavy < 1 || vyberpostavy > 4);
+    
+    Postava hrace = Charakter[vyberpostavy - 1];
+    statistiky(hrace);
 
+}
