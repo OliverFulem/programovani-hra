@@ -15,40 +15,100 @@ struct Postava{
     int MaxEnergie;
     int energie;
     int silautoku;
-    int zlato;a
+    int zlatoa;
     int uroven;
     int zkusenosti;
     schopnost schopnosti[2];
 };
+struct Monstrum {
+    std:: string jmeno;
+    int zivoty;
+    int utok;
+    bool miniboss;
+    bool hlavniboss;
 
-void statistiky(Postava hrac){
+};
+void statistiky(Postava, hrac){
     std:: cout << "Charakter: " << hrac.jmeno << std:: endl;
     std:: cout << "Zivoty: " << hrac.zivoty << "/" << hrac.MaxZivoty << std:: endl;
     std:: cout << "Mana: " << hrac.energie << "/" << hrac.MaxEnergie << std:: endl;
     std:: cout << "Utok: " << hrac.silautoku << std:: endl;
     std:: cout << "Level: " << hrac.uroven << " Zkusenosti: " << hrac.zkusenosti << " Zlato: " << hrac.zlato << std:: endl;
     std:: cout << "Schopnosti:" << std::  endl;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 2; i++) {
         std:: cout << " " << hrac.schopnosti[i].nazev << " utok: " << hrac.schopnosti[i].utok << ", Mana: " << hrac.schopnosti[i].ubranienergie << ")" << std:: endl;
     }
 }
 
 
-void vylepsenipostava(Postava hrac){
+void vylepsenipostava(Postava, hrac){
     
 }
 
+void vesnice(postava, hrac){
+    std:: int rozhodnuti;
+    std:: cout << "Vytejte ve vesnici co by ste si chtel koupit" << std:: endl;
+    std:: cout << "1 - Doplnit ztivoty (cena 5 zlata)" << std:: endl;
+    std:: cout << "2 - Doplnit energii(cena 5 zalta)" << std:: endl;
+    std:: cout << "3 - zvisit maximalni zivoty (cena 10 zlata)" << std:: endl;
+    std:: cout << "4 - zvisit maximalni energii (cena 10 zalta)" << std:: endl;
+    std:: cout << "5 - projit pres vesnici bez zastavky " << std:: endl;
+    std:: cin >> rozhodnuti;
+}
+    switch (rozhodnuti){
+    case 1:
+        if (hrac.zlato >= 5){
+        hra.zlato -= 5;
+        hrac.zivoty = hrac.MaxZivoty;
+        std:: cout << "Doplnil sis zivoty " << std:: endl;
+        }else{
+        std:: cout << "Nemate dostatek zlata " << std:: endl;
+        }
+        break;
+    case 2:
+        if (hrac.zlato >= 5){
+        hra.zlato -= 5;
+        hrac.energie = hrac.MaxEnergie;
+        std:: cout << "Doplnil sis energii " << std:: endl;
+        }else{
+        std:: cout << "Nemate dostatek zlata " << std:: endl;
+        }
+        break;
+    case 3:
+        if (hrac.zlato >= 10){
+        hra.zlato -= 10;
+        hrac.MaxZivoty++;
+        std:: cout << "Zvisil sis maximalni Zivoty " << std:: endl;
+        }else{
+        std:: cout << "Nemate dostatek zlata " << std:: endl;
+        }
+        break;
+    case 4:¨
+        if (hrac.zlato >= 10){
+        hra.zlato -= 10;
+        hrac.MaxEnergie++;
+        std:: cout << "Zvisil sis maximalni Energii " << std:: endl;
+        }else{
+        std:: cout << "Nemate dostatek zlata " << std:: endl;
+        }
+        break;
+    case 5:
+        std:: cout << "Pokracujete v ceste " << std:: endl;
+        break;
+
+    
+}
 int main () {
     int vstup;
 
     std::cout << "Vytejte ve hre plne dobrodruzstvi" << std::endl;
-    std::cout << "Tvim cilem bude projit lesem kde potkas mnoho bytosti, pres ktere se musis dostat do kralovstvi." << std::endl;
+    std::cout << "Tvym cilem bude projit lesem kde potkas mnoho bytosti, pres ktere se musis dostat do kralovstvi." << std::endl;
     std::cout << "Pokud si chcete hru zahrat tak stisknete 1 pokud ne tak stisknete cokoliv jineho" << std::endl;
     std::cin >> vstup;
 
     if(vstup != 1) {
         std::cout << "Srabe namas odvahu projit strasidlelnym lesem : tak se snad brzy uvidime.";
-        //retur 0;
+        // retur 0;
     }
     
     std::cout << "Vyber si za koho chces hrat " << std::endl;
@@ -104,10 +164,10 @@ int vyberpostavy;
 do{
     std:: cout << "Vyber si za koho chces hrat";
     std:: cout << ", ale pozor jak uz jsem se zminoval, tak kazda postva umi neco jineho" << std:: endl;
-    std:: cout << "Mas tedy na vyber mezi" << " : " << "Cajdou, Tufem, Dratenkou a Mazakem";
+    std:: cout << "Mas tedy na vyber mezi" << " : " << "1 - Cajdou, 2 - Tufem, 3 - Dratenkou, 4 - Mazakem";
     std:: cin >> vyberpostavy;
     } while (vyberpostavy < 1 || vyberpostavy > 4);
-    std:: cout << "Vybral sis " << charakter[vyberpostavy - 1].jmeno <<endl;
+    std:: cout << "Vybral sis " << Charakter[vyberpostavy - 1].jmeno << std:: endl;
 
     
     Postava hrace = Charakter[vyberpostavy - 1];
