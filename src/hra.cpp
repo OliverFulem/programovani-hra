@@ -41,9 +41,9 @@ void statistiky(Postava hrac){
 }
 
 
-void vylepsenipostava(Postava hrac){
+//void vylepsenipostava(Postava hrac){
     
-}
+//}
 
 void vesnice(Postava hrac){
     int rozhodnuti;
@@ -97,10 +97,61 @@ void vesnice(Postava hrac){
         break;
     }
 }
+void souboj1(Postava &hrac){}
+void souboj2(Postava &hrac){}
+void souboj3(Postava &hrac){}
+void soubojminiboss(Postava &hrac){}
+void soubojhlavniboss(Postava &hrac){}
 
     void les(Postava &hrac) {
-        std::string dej[15];
+        std::string dej[16] = {
+            "souboj1", "souboj2", "souboj3", "souboj2"
+            "vesnice", "souboj1", "souboj3", "souboj2"
+            "souboj1", "soubojminiboss", "souboj2", "souboj3"
+            "vesnice", "soubojhlavniboss", "souboj3", "souboj2"
+
+        };
+         for (int i = 0; i < 20; i++) {
+        int pokracovat;
+        std::cout << "Krok " << i + 1 << " v lese" << std::endl;
+        std::cout << "Zadej 1 pro pokračování: ";
+        std::cin >> pokracovat;
+
+        if (dej[i] == "vesnice") {
+            std::cout << "Dorazil jsi do vesnice" << std::endl;
+            vesnice(hrac);
+        } else if (dej[i] == "souboj1") {
+            std::cout << "hele jedno monstrum te viziva" << std::endl;
+            souboj1(hrac);
+        } else if (dej[i] == "souboj2") {
+            std::cout << "Narazil jsi na dvě monstra" << std::endl;
+            souboj2(hrac);
+        } else if (dej[i] == "souboj3") {
+            std::cout << "Tři monstra jsou pred tebou" << std::endl;
+            souboj3(hrac);
+        } else if (dej[i] == "soubojminiboss") {
+            std::cout << "Pozor objevil se pred tebou mini boss" << std::endl;
+            soubojminiboss(hrac);
+        } else if (dej[i] == "soubojhlavniboss") {
+            std::cout << "Narazil jsi na hlavniho bosse" << std::endl;
+            soubojhlavniboss(hrac);
+            if (hrac.zivoty > 0) {
+                std::cout << "Vyhrál jsi hru! Gratulujeme!" << std::endl;
+            } else {
+                std::cout << "Zemřel jsi v boji s hlavním bossem.<< std::endl";
+                std::cout <<  "Konec hry.";
+            }
+            break;
+        }
+
+        if (hrac.zivoty <= 0) {
+            std::cout << "Zemřel jsi." << std::endl;
+            std::cout << " Konec hry.";
+            break;
+        }
     }
+}
+
 int main () {
     int vstup;
 
@@ -258,5 +309,20 @@ do{
     monstra[15].miniboss = true;
     monstra[15].hlavniboss = false;
 
+bool vybervarianty;
+std:: cout << "stojis pred strasidelnym lesem kde te muzou prepadnout monstra, tak doufam ze si pripravenej bojovat mas na vyber muzes navstivit vesnici s penezi co jsi nasel na zemi nebo pujdes do lesa." << std:: endl;
+std:: cout << "pro to aby jsi sel do mesta zmackni 1 pr to aby si sel do vesnice tak zmackni 0";
+std:: cin >> vybervarianty;
 
+if(vybervarianty == 1){
+    std:: cout <<"dorazil jsi do vesnice " << std:: endl;
+    std:: cout << "co chces delat";
+    vesnice(hrace);
+}else if(vybervarianty == 0){
+    std:: cout << "pokracujes do lesa" << std:: endl;
+    les(hrace);
+}else{
+std:: cout << "zadal jsi chybnou hodnotu" << std:: endl;
+std:: cout << "zadej znova";
+}
 }
