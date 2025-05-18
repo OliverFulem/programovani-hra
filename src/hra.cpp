@@ -41,11 +41,8 @@ void statistiky(Postava hrac){
 }
 
 
-//void vylepsenipostava(Postava hrac){
-    
-//}
 
-void vesnice(Postava hrac){
+void vesnice(Postava &hrac){
     int rozhodnuti;
     std:: cout << "Vytejte ve vesnici co by ste si chtel koupit" << std:: endl;
     std:: cout << "1 - Doplnit ztivoty (cena 5 zlata)" << std:: endl;
@@ -97,17 +94,140 @@ void vesnice(Postava hrac){
         break;
     }
 }
-void souboj1(Postava &hrac){}
-void souboj2(Postava &hrac){}
-void souboj3(Postava &hrac){}
-void soubojminiboss(Postava &hrac){}
-void soubojhlavniboss(Postava &hrac){}
+void souboj1(Postava &hrac){
+    Monstrum monster = {"Bomber", 8, 2, false, false};
+
+    std::cout << "Souboj proti " << monster.jmeno << " zapocal" << std::endl;
+
+    while (hrac.zivoty > 0 && monster.zivoty > 0) {
+        monster.zivoty -= hrac.silautoku;
+        std::cout << "Utokl jsi " << monster.jmeno << " a zpusobil mu " << hrac.silautoku << " zraneni. " 
+                  << monster.jmeno << " ma " << monster.zivoty << " zivotu." << std::endl;
+        if (monster.zivoty <= 0) {
+            std::cout << "Vyhral jsi souboj!" << std::endl;
+            hrac.zlato += 5;
+            break;
+        }
+
+        hrac.zivoty -= monster.utok;
+        std::cout << monster.jmeno << " te utocil a zpusobil ti " << monster.utok << " zraneni. Mas " 
+                  << hrac.zivoty << " zivotu." << std::endl;
+        if (hrac.zivoty <= 0) {
+            std::cout << "Prohral jsi souboj." << std::endl;
+            break;
+        }
+    }
+}
+
+void souboj2(Postava &hrac){
+    Monstrum monster[2] = {
+ {"Zmar", 13, 3, false, false},
+        {"Des", 10, 5, false, false}
+    };
+
+    std::cout << "Souboj proti dvem monstrum zacina, tak se priprav." << std::endl;
+
+    while (hrac.zivoty > 0 && (monster[0].zivoty > 0 || monster[1].zivoty > 0)) {
+        for (int i = 0; i < 2; i++) {
+            if (monster[i].zivoty > 0) {
+                monster[i].zivoty -= hrac.silautoku;
+                std::cout << "Utokl jsi " << monster[i].jmeno << " a zpusobil mu " << hrac.silautoku << " zraneni. "
+                          << monster[i].jmeno << " ma " << (monster[i].zivoty > 0 ? monster[i].zivoty : 0) << " zivotu." << std::endl;
+                if (monster[i].zivoty <= 0) {
+                    std::cout << "Zabil jsi " << monster[i].jmeno << "!" << std::endl;
+                }
+                break;
+            }
+        }
+
+        bool nekdoZije = false;
+        for (int i = 0; i < 2; i++) {
+            if (monster[i].zivoty > 0) {
+                nekdoZije = true;
+                break;
+            }
+        }
+        if (!nekdoZije) {
+            std::cout << "Vyhral jsi souboj proti dvem monstrum." << std::endl;
+            hrac.zlato += 10;
+            break;
+        }
+
+        for (int i = 0; i < 2; i++) {
+            if (monster[i].zivoty > 0) {
+                hrac.zivoty -= monster[i].utok;
+                std::cout << monster[i].jmeno << " te utocil a zpusobil ti " << monster[i].utok << " zraneni. Mas "
+                          << (hrac.zivoty > 0 ? hrac.zivoty : 0) << " zivotu." << std::endl;
+                if (hrac.zivoty <= 0) {
+                    std::cout << "Prohral jsi souboj." << std::endl;
+                    return;
+                }
+            }
+        }
+    }
+}
+
+void souboj3(Postava &hrac) {
+    Monstrum monster[3] = {
+        {"Zkaza", 15, 4, false, false},
+        {"Bestie", 16, 4, false, false},
+        {"Horda", 15, 6, false, false}
+    };
+
+    std::cout << "Tri monstra te napadli." << std::endl;
+
+    while (hrac.zivoty > 0 && (monster[0].zivoty > 0 || monster[1].zivoty > 0 || monster[2].zivoty > 0)) {
+        for (int i = 0; i < 3; i++) {
+            if (monster[i].zivoty > 0) {
+                monster[i].zivoty -= hrac.silautoku;
+                std::cout << "Utokl jsi " << monster[i].jmeno << " a zpusobil mu " << hrac.silautoku << " zraneni. "
+                          << monster[i].jmeno << " ma " << (monster[i].zivoty > 0 ? monster[i].zivoty : 0) << " zivotu." << std::endl;
+                if (monster[i].zivoty <= 0) {
+                    std::cout << "Zabil jsi " << monster[i].jmeno << "!" << std::endl;
+                }
+                break;
+            }
+        }
+
+        bool nekdoZije = false;
+        for (int i = 0; i < 3; i++) {
+            if (monster[i].zivoty > 0) {
+                nekdoZije = true;
+                break;
+            }
+        }
+        if (!nekdoZije) {
+            std::cout << "Vyhral jsi souboj proti trem monstrum." << std::endl;
+            hrac.zlato += 15;
+            break;
+        }
+
+        for (int i = 0; i < 3; i++) {
+            if (monster[i].zivoty > 0) {
+                hrac.zivoty -= monster[i].utok;
+                std::cout << monster[i].jmeno << " te utocil a zpusobil ti " << monster[i].utok << " zraneni. Mas "
+                          << (hrac.zivoty > 0 ? hrac.zivoty : 0) << " zivotu." << std::endl;
+                if (hrac.zivoty <= 0) {
+                    std::cout << "Prohral jsi souboj." << std::endl;
+                    return;
+                }
+            }
+        }
+    }
+}
+
+void soubojminiboss(Postava &hrac){
+    
+}
+void soubojhlavniboss(Postava &hrac){
+
+}
 
     void les(Postava &hrac) {
         std::string dej[16] = {
-            "souboj1", "souboj2", "souboj3", "souboj2"
-            "vesnice", "souboj1", "souboj3", "souboj2"
-            "souboj1", "soubojminiboss", "souboj2", "souboj3"
+            "souboj1", "souboj2", "souboj3", "souboj2",
+            "vesnice", "souboj1", "souboj3", "souboj2",
+            "souboj1", "soubojminiboss", "souboj2", "souboj3",
             "vesnice", "soubojhlavniboss", "souboj3", "souboj2"
 
         };
@@ -138,7 +258,7 @@ void soubojhlavniboss(Postava &hrac){}
             if (hrac.zivoty > 0) {
                 std::cout << "Vyhrál jsi hru! Gratulujeme!" << std::endl;
             } else {
-                std::cout << "Zemřel jsi v boji s hlavním bossem.<< std::endl";
+                std::cout << "Zemřel jsi v boji s hlavním bossem."<< std::endl;
                 std::cout <<  "Konec hry.";
             }
             break;
@@ -230,81 +350,97 @@ do{
 
     Monstrum monstra[16];
     monstra[0].jmeno = "Bomber" ;
+    monstra[0].zivoty = 8;
     monstra[0].utok = 2;
     monstra[0].miniboss = false;
     monstra[0].hlavniboss = false;
 
     monstra[1].jmeno = "Troll" ;
+    monstra[1].zivoty = 7;
     monstra[1].utok = 3;
     monstra[1].miniboss = false;
     monstra[1].hlavniboss = false;
 
     monstra[2].jmeno = "Sok" ;
+    monstra[2].zivoty = 8;
     monstra[2].utok = 3;
     monstra[2].miniboss = false;
     monstra[2].hlavniboss = false;
 
     monstra[3].jmeno = "Golem" ;
+    monstra[3].zivoty = 8;
     monstra[3].utok = 6;
     monstra[3].miniboss = false;
     monstra[3].hlavniboss = false;
 
     monstra[4].jmeno = "Zurivec" ;
+    monstra[4].zivoty = 9;
     monstra[4].utok = 5;
     monstra[4].miniboss = false;
     monstra[4].hlavniboss = false;
 
     monstra[5].jmeno = "Barbar" ;
+    monstra[5].zivoty = 13;
     monstra[5].utok = 4;
     monstra[5].miniboss = false;
     monstra[5].hlavniboss = false;
 
     monstra[6].jmeno = "Mraz" ;
+    monstra[6].zivoty = 13;
     monstra[6].utok = 2;
     monstra[6].miniboss = false;
     monstra[6].hlavniboss = false;
 
     monstra[7].jmeno = "Des" ;
+    monstra[7].zivoty = 10;
     monstra[7].utok = 5;
     monstra[7].miniboss = false;
     monstra[7].hlavniboss = false;
 
     monstra[8].jmeno = "Zmar" ;
+    monstra[8].zivoty = 13;
     monstra[8].utok = 3;
     monstra[8].miniboss = false;
     monstra[8].hlavniboss = false;
 
     monstra[9].jmeno = "Zkaza" ;
+    monstra[9].zivoty = 15;
     monstra[9].utok = 4;
     monstra[9].miniboss = false;
     monstra[9].hlavniboss = false;
 
     monstra[10].jmeno = "Bestie" ;
+    monstra[10].zivoty = 16;
     monstra[10].utok = 4;
     monstra[10].miniboss = false;
     monstra[10].hlavniboss = false;
 
-    monstra[11].jmeno = "¨Horda" ;
+    monstra[11].jmeno = "Horda" ;
+    monstra[11].zivoty = 15;
     monstra[11].utok = 6;
     monstra[11].miniboss = false;
     monstra[11].hlavniboss = false;
 
     monstra[12].jmeno = "Drtic" ;
+    monstra[12].zivoty = 17;
     monstra[12].utok = 5;
     monstra[12].miniboss = false;
     monstra[12].hlavniboss = false;
 
     monstra[13].jmeno = "Netvor" ;
+    monstra[13].zivoty = 16;
     monstra[13].utok = 6;
     monstra[13].miniboss = false;
     monstra[13].hlavniboss = false;
 
     monstra[14].jmeno = "KAT" ;
+    monstra[14].zivoty = 19;
     monstra[14].utok = 10;
     monstra[14].miniboss = true;
     monstra[14].hlavniboss = false;
 
     monstra[15].jmeno = "TYRAN" ;
+    monstra[15].zivoty = 20;
     monstra[15].utok = 11;
     monstra[15].miniboss = true;
     monstra[15].hlavniboss = false;
