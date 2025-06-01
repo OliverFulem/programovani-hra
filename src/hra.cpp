@@ -2,6 +2,10 @@
 #include <string>
 // using namespace std;
 
+int zakladutokboss = 5;
+int uroven = 3;
+
+
 struct schopnost{
     std::string nazev;
     int utok;
@@ -262,9 +266,69 @@ void soubojminiboss2(Postava &hrac){
 }
     
 }
+void vykresliCtverec() {
+    std::cout << "****\n*  *\n*  *\n****\n";
+}
 
+void vykresliObdelnik() {
+    std::cout << "******\n*    *\n******\n";
+}
+
+void vykresliKruh() {
+    std::cout << " *** \n*   *\n*   *\n *** \n";
+}
 void soubojhlavniboss(Postava &hrac){
+    Monstrum hlavniboss = {"Geomancer", 25, 15, false, true};
+    int zakladutokboss = hlavniboss.utok;
+    int uroven = hrac.uroven;
 
+    std::cout << "Souboj s bossem: " << hlavniboss.jmeno << std::endl;
+
+    while (hrac.zivoty > 0 && hlavniboss.zivoty > 0) {
+        int volba;
+        std::cout << "\nVyber tvar k utoku (1 - Ctverec, 2 - Obdelnik, 3 - Kruh): ";
+        std::cin >> volba;
+
+        int poskozeni = 0;
+        if (volba == 1) {
+            vykresliCtverec();
+            poskozeni = zakladutokboss * 4;
+            std::cout << "Geomancer pouzil ctverec a zpusobil " << poskozeni << " poskozeni." << std::endl;
+        }
+        else if (volba == 2) {
+            vykresliObdelnik();
+            poskozeni = zakladutokboss * (2 + uroven * 2);
+            std::cout << "Geomancer pouzil obdelnik a zpusobil " << poskozeni << " poskozeni." << std::endl;
+        }
+        else if (volba == 3) {
+            vykresliKruh();
+            int nahodnaHodnota = 3;
+            poskozeni = zakladutokboss * nahodnaHodnota * 2;
+            std::cout << "Geomancer pouzil kruh (nasobeno pevnou hodnotou " << nahodnaHodnota << ") a zpusobil " << poskozeni << " poskozeni." << std::endl;
+        }
+        else {
+            std::cout << "Spatna volba, Geomancer ztratil kolo!" << std::endl;
+            poskozeni = 0;
+        }
+
+        hlavniboss.zivoty -= poskozeni;
+        if (hlavniboss.zivoty <= 0) {
+            std::cout << "Porazil jsi bosse " << hlavniboss.jmeno << "!" << std::endl;
+            return;
+        }
+        else {
+            std::cout << hlavniboss.jmeno << " ma " << hlavniboss.zivoty << " zivotu zbyva." << std::endl;
+        }
+
+        
+        hrac.zivoty -= hlavniboss.utok;
+        std::cout << hlavniboss.jmeno << " te zasahl za " << hlavniboss.utok << ". Mas " << hrac.zivoty << " zivotu." << std::endl;
+
+        if (hrac.zivoty <= 0) {
+            std::cout << "Prohral jsi proti bosssovi." << std::endl;
+            return;
+        }
+    }
 }
 
     void les(Postava &hrac) {
