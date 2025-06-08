@@ -2,9 +2,6 @@
 #include <string>
 // using namespace std;
 
-int zakladutokboss = 5;
-int uroven = 3;
-
 
 struct schopnost{
     std::string nazev;
@@ -30,8 +27,22 @@ struct Monstrum {
     int utok;
     bool miniboss;
     bool hlavniboss;
-
 };
+
+int bezpecnyVstup(int min, int max) {
+    int volba;
+    while (true) {
+        std::cin >> volba;
+        if (std::cin.fail() || volba < min || volba > max) {
+            std::cin.clear();
+            std::cin.ignore(1000, '\n');
+            std::cout << "Špatný vstup. Zadej číslo mezi " << min << " a " << max << ": ";
+        } else {
+            return volba;
+        }
+    }
+}
+
 void statistiky(Postava hrac){
     std:: cout << "Charakter: " << hrac.jmeno << std:: endl;
     std:: cout << "Zivoty: " << hrac.zivoty << "/" << hrac.MaxZivoty << std:: endl;
@@ -339,7 +350,7 @@ void soubojhlavniboss(Postava &hrac){
             "vesnice", "soubojhlavniboss", "souboj3", "souboj2"
 
         };
-         for (int i = 0; i < 20; i++) {
+         for (int i = 0; i < 16; i++) {
         int pokracovat;
         std::cout << "Krok " << i + 1 << " v lese" << std::endl;
         std::cout << "Zadej 1 pro pokracovani4: ";
@@ -349,7 +360,7 @@ void soubojhlavniboss(Postava &hrac){
             std::cout << "Dorazil jsi do vesnice" << std::endl;
             vesnice(hrac);
         } else if (dej[i] == "souboj1") {
-            std::cout << "Hele jedno monstrum te viziva" << std::endl;
+            std::cout << "Hele jedno monstrum te vyzyva" << std::endl;
             souboj1(hrac);
         } else if (dej[i] == "souboj2") {
             std::cout << "Narazil jsi na dve monstra" << std::endl;
@@ -455,9 +466,21 @@ do{
     std:: cin >> vyberpostavy;
     } while (vyberpostavy < 1 || vyberpostavy > 4);
     std:: cout << "Vybral sis " << Charakter[vyberpostavy - 1].jmeno << std:: endl;
+     if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(1000, '\n');
+        std::cout << "To není číslo. Zkus to znovu." << std::endl;
+    }
+    else if (vyberpostavy < 1 || vyberpostavy > 3) {
+        std::cout << "Zadal jsi špatné číslo. Zkus 1, 2 nebo 3." << std::endl;
+    }
+    else {
+        break;
+    }
+
 
     Postava hrace = Charakter[vyberpostavy - 1];
-    statistiky(hrace);
+    statistiky(hrac);
 
     Monstrum monstra[17];
     monstra[0].jmeno = "Bomber" ;
@@ -565,13 +588,13 @@ do{
 
 bool vybervarianty;
 std:: cout << "stojis pred strasidelnym lesem kde te muzou prepadnout monstra, tak doufam ze si pripravenej bojovat mas na vyber muzes navstivit vesnici s penezi co jsi nasel na zemi nebo pujdes do lesa." << std:: endl;
-std:: cout << "pro to aby jsi sel do mesta zmackni 1 pro to aby si sel do lesa tak zmackni 0";
+std:: cout << "pro to aby jsi sel do mesta zmackni jakekoliv cislo pro to aby si sel do lesa tak zmackni 0";
 std:: cin >> vybervarianty;
 
 if(vybervarianty == 1){
     std:: cout <<"dorazil jsi do vesnice " << std:: endl;
     std:: cout << "co chces delat";
-    vesnice(hrace);
+    vesnice(hrac);
 }else if(vybervarianty == 0){
     std:: cout << "pokracujes do lesa" << std:: endl;
     les(hrace);
