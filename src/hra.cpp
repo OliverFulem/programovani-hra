@@ -1,605 +1,378 @@
 #include <iostream>
 #include <string>
-// using namespace std;
+#include <vector>
+#include <limits>
+#include <algorithm> // Pro std::min
+// Řekne překladači, aby nedefinoval makra min a max z Windows
+#define NOMINMAX
+// Nyní můžeme bezpečně vložit windows.h
+#include <windows.h> // Potřebné pro funkce SetConsole...
 
-
-struct schopnost{
+// --- Datové struktury ---
+struct Schopnost {
     std::string nazev;
     int utok;
-    int ubranienergie;
+    int ubraniEnergie;
 };
 
-struct Postava{
+struct Postava {
     std::string jmeno;
-    int MaxZivoty;
+    int maxZivoty;
     int zivoty;
-    int MaxEnergie;
+    int maxEnergie;
     int energie;
-    int silautoku;
+    int silaUtoku;
     int zlato;
     int uroven;
     int zkusenosti;
-    schopnost schopnosti[2];
-};
-struct Monstrum {
-    std:: string jmeno;
-    int zivoty;
-    int utok;
-    bool miniboss;
-    bool hlavniboss;
+    std::vector<Schopnost> schopnosti;
 };
 
-int bezpecnyVstup(int min, int max) {
+struct Monstrum {
+    std::string jmeno;
+    int zivoty;
+    int utok;
+    bool jeMiniboss;
+    bool jeHlavniBoss;
+};
+
+
+// --- Pomocné funkce ---
+
+int ziskejValidniVstup(int min, int max) {
     int volba;
     while (true) {
         std::cin >> volba;
         if (std::cin.fail() || volba < min || volba > max) {
+            std::cout << "Neplatná volba. Zadejte prosím číslo mezi " << min << " a " << max << ": ";
             std::cin.clear();
-            std::cin.ignore(1000, '\n');
-            std::cout << "Špatný vstup. Zadej číslo mezi " << min << " a " << max << ": ";
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         } else {
-            return volba;
-        }
-    }
-}
-
-void statistiky(Postava hrac){
-    std:: cout << "Charakter: " << hrac.jmeno << std:: endl;
-    std:: cout << "Zivoty: " << hrac.zivoty << "/" << hrac.MaxZivoty << std:: endl;
-    std:: cout << "Mana: " << hrac.energie << "/" << hrac.MaxEnergie << std:: endl;
-    std:: cout << "Utok: " << hrac.silautoku << std:: endl;
-    std:: cout << "Level: " << hrac.uroven << " Zkusenosti: " << hrac.zkusenosti << " Zlato: " << hrac.zlato << std:: endl;
-    std:: cout << "Schopnosti:" << std::  endl;
-    for (int i = 0; i < 2; i++) {
-        std:: cout << " " << hrac.schopnosti[i].nazev << " utok: " << hrac.schopnosti[i].utok << ", Mana: " << hrac.schopnosti[i].ubranienergie << ")" << std:: endl;
-    }
-}
-
-
-
-void vesnice(Postava &hrac){
-    int rozhodnuti;
-    std:: cout << "Vytejte ve vesnici co by ste si chtel koupit" << std:: endl;
-    std:: cout << "1 - Doplnit ztivoty (cena 5 zlata)" << std:: endl;
-    std:: cout << "2 - Doplnit energii(cena 5 zalta)" << std:: endl;
-    std:: cout << "3 - zvisit maximalni zivoty (cena 10 zlata)" << std:: endl;
-    std:: cout << "4 - zvisit maximalni energii (cena 10 zalta)" << std:: endl;
-    std:: cout << "5 - projit pres vesnici bez zastavky " << std:: endl;
-    std:: cin >> rozhodnuti;
-
-    switch (rozhodnuti){
-    case 1:
-        if (hrac.zlato >= 5){
-        hrac.zlato -= 5;
-        hrac.zivoty = hrac.MaxZivoty;
-        std:: cout << "Doplnil sis zivoty " << std:: endl;
-        }else{
-        std:: cout << "Nemate dostatek zlata " << std:: endl;
-        }
-        break;
-    case 2:
-        if (hrac.zlato >= 5){
-        hrac.zlato -= 5;
-        hrac.energie = hrac.MaxEnergie;
-        std:: cout << "Doplnil sis energii " << std:: endl;
-        }else{
-        std:: cout << "Nemate dostatek zlata " << std:: endl;
-        }
-        break;
-    case 3:
-        if (hrac.zlato >= 10){
-            hrac.zlato -= 10;
-            hrac.MaxZivoty++;
-            std:: cout << "Zvisil sis maximalni Zivoty " << std:: endl;
-        }else{
-            std:: cout << "Nemate dostatek zlata " << std:: endl;
-        }
-        break;
-    case 4:
-        if (hrac.zlato >= 10){
-        hrac.zlato -= 10;
-        hrac.MaxEnergie++;
-        std:: cout << "Zvisil sis maximalni Energii " << std:: endl;
-        }else{
-        std:: cout << "Nemate dostatek zlata " << std:: endl;
-        }
-        break;
-    case 5:
-        std:: cout << "Pokracujete v ceste " << std:: endl;
-        break;
-    }
-}
-void souboj1(Postava &hrac){
-    Monstrum monster = {"Bomber", 8, 2, false, false};
-
-    std::cout << "Souboj proti " << monster.jmeno << " zapocal" << std::endl;
-
-    while (hrac.zivoty > 0 && monster.zivoty > 0) {
-        monster.zivoty -= hrac.silautoku;
-        std::cout << "Utokl jsi " << monster.jmeno << " a zpusobil mu " << hrac.silautoku << " zraneni. " 
-                  << monster.jmeno << " ma " << monster.zivoty << " zivotu." << std::endl;
-        if (monster.zivoty <= 0) {
-            std::cout << "Vyhral jsi souboj!" << std::endl;
-            std::cout << "Mas + 5 zlata"  << std::endl;
-            hrac.zlato += 5;
-            break;
-        }
-
-        hrac.zivoty -= monster.utok;
-        std::cout << monster.jmeno << " te utocil a zpusobil ti " << monster.utok << " zraneni. Mas " 
-                  << hrac.zivoty << " zivotu." << std::endl;
-        if (hrac.zivoty <= 0) {
-            std::cout << "Prohral jsi souboj." << std::endl;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             break;
         }
     }
+    return volba;
 }
 
-void souboj2(Postava &hrac){
-    Monstrum monster[2] = {
- {"Zmar", 13, 3, false, false},
-        {"Des", 10, 5, false, false}
-    };
 
-    std::cout << "Souboj proti dvem monstrum zacina, tak se priprav." << std::endl;
+void statistiky(const Postava& hrac) {
+    std::cout << "\n--- STATISTIKY ---\n";
+    std::cout << "Charakter: " << hrac.jmeno << '\n';
+    std::cout << "Životy: " << hrac.zivoty << "/" << hrac.maxZivoty << '\n';
+    std::cout << "Energie: " << hrac.energie << "/" << hrac.maxEnergie << '\n';
+    std::cout << "Útok: " << hrac.silaUtoku << '\n';
+    std::cout << "Level: " << hrac.uroven << " | Zkušenosti: " << hrac.zkusenosti << " | Zlato: " << hrac.zlato << '\n';
+    std::cout << "Schopnosti:\n";
+    for (const auto& s : hrac.schopnosti) {
+        std::cout << " - " << s.nazev << " (Útok: " << s.utok << ", Energie: " << s.ubraniEnergie << ")\n";
+    }
+    std::cout << "------------------\n";
+}
 
-    while (hrac.zivoty > 0 && (monster[0].zivoty > 0 || monster[1].zivoty > 0)) {
-        for (int i = 0; i < 2; i++) {
-            if (monster[i].zivoty > 0) {
-                monster[i].zivoty -= hrac.silautoku;
-                std::cout << "Utokl jsi " << monster[i].jmeno << " a zpusobil mu " << hrac.silautoku << " zraneni. "
-                          << monster[i].jmeno << " ma " << (monster[i].zivoty > 0 ? monster[i].zivoty : 0) << " zivotu." << std::endl;
-                if (monster[i].zivoty <= 0) {
-                    std::cout << "Zabil jsi " << monster[i].jmeno << "!" << std::endl;
+
+// --- Herní systémy ---
+
+bool provedTransakci(Postava &hrac, int cena) {
+    if (hrac.zlato >= cena) {
+        hrac.zlato -= cena;
+        return true;
+    } else {
+        std::cout << "Nemáte dostatek zlata.\n";
+        return false;
+    }
+}
+
+void vesnice(Postava &hrac) {
+    const int CENA_DOPLNENI = 5;
+    const int CENA_VYLEPSENI = 10;
+
+    bool hotovo = false;
+    while (!hotovo) {
+        statistiky(hrac);
+        std::cout << "\nVítejte ve vesnici! Co byste si chtěl koupit?\n";
+        std::cout << "1 - Doplnit životy (cena " << CENA_DOPLNENI << " zlata)\n";
+        std::cout << "2 - Doplnit energii (cena " << CENA_DOPLNENI << " zlata)\n";
+        std::cout << "3 - Zvýšit maximální životy (cena " << CENA_VYLEPSENI << " zlata)\n";
+        std::cout << "4 - Zvýšit maximální energii (cena " << CENA_VYLEPSENI << " zlata)\n";
+        std::cout << "5 - Odejít z vesnice\n";
+        std::cout << "Vaše volba: ";
+        int rozhodnuti = ziskejValidniVstup(1, 5);
+
+        switch (rozhodnuti) {
+            case 1:
+                if (provedTransakci(hrac, CENA_DOPLNENI)) {
+                    hrac.zivoty = hrac.maxZivoty;
+                    std::cout << "Doplnil sis životy.\n";
                 }
                 break;
-            }
-        }
-
-        bool nekdoZije = false;
-        for (int i = 0; i < 2; i++) {
-            if (monster[i].zivoty > 0) {
-                nekdoZije = true;
-                break;
-            }
-        }
-        if (!nekdoZije) {
-            std::cout << "Vyhral jsi souboj proti dvem monstrum." << std::endl;
-            std::cout << "Mas + 10 zlata"  << std::endl;
-            hrac.zlato += 10;
-            break;
-        }
-
-        for (int i = 0; i < 2; i++) {
-            if (monster[i].zivoty > 0) {
-                hrac.zivoty -= monster[i].utok;
-                std::cout << monster[i].jmeno << " te utocil a zpusobil ti " << monster[i].utok << " zraneni. Mas "
-                          << (hrac.zivoty > 0 ? hrac.zivoty : 0) << " zivotu." << std::endl;
-                if (hrac.zivoty <= 0) {
-                    std::cout << "Prohral jsi souboj." << std::endl;
-                    return;
+            case 2:
+                if (provedTransakci(hrac, CENA_DOPLNENI)) {
+                    hrac.energie = hrac.maxEnergie;
+                    std::cout << "Doplnil sis energii.\n";
                 }
-            }
+                break;
+            case 3:
+                if (provedTransakci(hrac, CENA_VYLEPSENI)) {
+                    hrac.maxZivoty++;
+                    std::cout << "Zvýšil sis maximální životy.\n";
+                }
+                break;
+            case 4:
+                if (provedTransakci(hrac, CENA_VYLEPSENI)) {
+                    hrac.maxEnergie++;
+                    std::cout << "Zvýšil sis maximální energii.\n";
+                }
+                break;
+            case 5:
+                std::cout << "Odcházíte z vesnice.\n";
+                hotovo = true;
+                break;
         }
     }
 }
 
-void souboj3(Postava &hrac) {
-    Monstrum monster[3] = {
-        {"Zkaza", 15, 4, false, false},
-        {"Bestie", 16, 4, false, false},
-        {"Horda", 15, 6, false, false}
-    };
 
-    std::cout << "Tri monstra te napadli." << std::endl;
+void souboj(Postava &hrac, std::vector<Monstrum> &monstra) {
+    std::cout << "\n!!! ZAČÍNÁ SOUBOJ !!!\n";
+    int zlateOdmeny = 0;
 
-    while (hrac.zivoty > 0 && (monster[0].zivoty > 0 || monster[1].zivoty > 0 || monster[2].zivoty > 0)) {
-        for (int i = 0; i < 3; i++) {
-            if (monster[i].zivoty > 0) {
-                monster[i].zivoty -= hrac.silautoku;
-                std::cout << "Utokl jsi " << monster[i].jmeno << " a zpusobil mu " << hrac.silautoku << " zraneni. "
-                          << monster[i].jmeno << " ma " << (monster[i].zivoty > 0 ? monster[i].zivoty : 0) << " zivotu." << std::endl;
-                if (monster[i].zivoty <= 0) {
-                    std::cout << "Zabil jsi " << monster[i].jmeno << "!" << std::endl;
-                }
-                break;
+    while (hrac.zivoty > 0 && !monstra.empty()) {
+        std::cout << "\n--- TVŮJ TAH ---\n";
+        statistiky(hrac);
+        std::cout << "Protivníci:\n";
+        for (size_t i = 0; i < monstra.size(); ++i) {
+            std::cout << i + 1 << ". " << monstra[i].jmeno << " (Životy: " << monstra[i].zivoty << ")\n";
+        }
+
+        size_t cilIndex = 0;
+        if (monstra.size() > 1) {
+            std::cout << "Vyber cíl (1-" << monstra.size() << "): ";
+            cilIndex = ziskejValidniVstup(1, monstra.size()) - 1;
+        }
+
+        // Odečtení energie za základní útok
+        const int ENERGIE_UTOK = 1;
+        if (hrac.energie >= ENERGIE_UTOK) {
+            hrac.energie -= ENERGIE_UTOK;
+            Monstrum &cil = monstra[cilIndex];
+            cil.zivoty -= hrac.silaUtoku;
+            std::cout << "Útočíš na " << cil.jmeno << " a způsobil jsi " << hrac.silaUtoku << " zranění. (Odečtena 1 energie)\n";
+
+            if (cil.zivoty <= 0) {
+                std::cout << "Porazil jsi " << cil.jmeno << "!\n";
+                zlateOdmeny += cil.jeMiniboss ? 20 : 5;
+                monstra.erase(monstra.begin() + cilIndex);
+            } else {
+                std::cout << cil.jmeno << " má nyní " << cil.zivoty << " životů.\n";
             }
+        } else {
+            std::cout << "Nemáš dostatek energie na útok! Kolo přeskakuješ.\n";
         }
 
-        bool nekdoZije = false;
-        for (int i = 0; i < 3; i++) {
-            if (monster[i].zivoty > 0) {
-                nekdoZije = true;
-                break;
-            }
-        }
-        if (!nekdoZije) {
-            std::cout << "Vyhral jsi souboj proti trem monstrum." << std::endl;
-            std::cout << "Mas + 15 zlata"  << std::endl;
-            hrac.zlato += 15;
-            break;
-        }
+        if (monstra.empty()) break;
 
-        for (int i = 0; i < 3; i++) {
-            if (monster[i].zivoty > 0) {
-                hrac.zivoty -= monster[i].utok;
-                std::cout << monster[i].jmeno << " te utocil a zpusobil ti " << monster[i].utok << " zraneni. Mas "
-                          << (hrac.zivoty > 0 ? hrac.zivoty : 0) << " zivotu." << std::endl;
-                if (hrac.zivoty <= 0) {
-                    std::cout << "Prohral jsi souboj." << std::endl;
-                    return;
-                }
-            }
+        std::cout << "\n--- TAH MONSTER ---\n";
+        for (const auto& monstrum : monstra) {
+            hrac.zivoty -= monstrum.utok;
+            std::cout << monstrum.jmeno << " na tebe zaútočil a způsobil ti " << monstrum.utok << " zranění. Máš "
+                      << std::max(0, hrac.zivoty) << " životů.\n";
+            if (hrac.zivoty <= 0) break;
         }
+    }
+
+    if (hrac.zivoty > 0) {
+        std::cout << "\nVyhrál jsi souboj! Získal jsi " << zlateOdmeny << " zlata.\n";
+        hrac.zlato += zlateOdmeny;
+    } else {
+        std::cout << "\nProhrál jsi souboj...\n";
     }
 }
 
-void soubojminiboss1(Postava &hrac){
-    Monstrum miniboss = {"KAT", 19, 10, true, false};
-    std::cout << "Souboj s minibossem: " << miniboss.jmeno << std::endl;
-    while (hrac.zivoty > 0 && miniboss.zivoty > 0) {
-        miniboss.zivoty -= hrac.silautoku;
-        std::cout << "Zasahl jsi minibosse za " << hrac.silautoku << " zraneni. Ma " << miniboss.zivoty << " zivotu." << std::endl;
-        if (miniboss.zivoty <= 0) {
-            std::cout << "Porazil jsi minibosse!" << std::endl;
-            std::cout << "Mas + 20 zivotu"  << std::endl;
-            hrac.zivoty += 20;
-            return;
-        }
-        hrac.zivoty -= miniboss.utok;
-        std::cout << miniboss.jmeno << " te zasahl za " << miniboss.utok << ". Mas " << hrac.zivoty << " zivotu." << std::endl;
-        if (hrac.zivoty <= 0) {
-            std::cout << "Prohral jsi proti minibossovi." << std::endl;
-            return;
-        
-    }
-}
-}   
-void soubojminiboss2(Postava &hrac){
-    Monstrum miniboss = {"TYRAN", 20, 11, true, false};
-    std::cout << "Souboj s minibossem: " << miniboss.jmeno << std::endl;
-    while (hrac.zivoty > 0 && miniboss.zivoty > 0) {
-        miniboss.zivoty -= hrac.silautoku;
-        std::cout << "Zasahl jsi minibosse za " << hrac.silautoku << " zraneni. Ma " << miniboss.zivoty << " zivotu." << std::endl;
-        if (miniboss.zivoty <= 0) {
-            std::cout << "Porazil jsi minibosse!"  << std::endl;
-            std::cout << "Mas + 21 zivotu"  << std::endl;
-            hrac.zivoty += 21;
-            return;
-        }
-        hrac.zivoty -= miniboss.utok;
-        std::cout << miniboss.jmeno << " te zasahl za " << miniboss.utok << ". Mas " << hrac.zivoty << " zivotu." << std::endl;
-        if (hrac.zivoty <= 0) {
-            std::cout << "Prohral jsi proti minibossovi." << std::endl;
-            return;
-        
-    }
-}
-    
-}
-void vykresliCtverec() {
-    std::cout << "****\n*  *\n*  *\n****\n";
-}
+void soubojHavniBoss(Postava &hrac) {
+    Monstrum hlavniBoss = {"Geomancer", 16, 8, false, true};
+    std::cout << "Souboj s bossem: " << hlavniBoss.jmeno << '\n';
 
-void vykresliObdelnik() {
-    std::cout << "******\n*    *\n******\n";
-}
-
-void vykresliKruh() {
-    std::cout << " *** \n*   *\n*   *\n *** \n";
-}
-void soubojhlavniboss(Postava &hrac){
-    Monstrum hlavniboss = {"Geomancer", 25, 15, false, true};
-    int zakladutokboss = hlavniboss.utok;
-    int uroven = hrac.uroven;
-
-    std::cout << "Souboj s bossem: " << hlavniboss.jmeno << std::endl;
-
-    while (hrac.zivoty > 0 && hlavniboss.zivoty > 0) {
-        int volba;
-        std::cout << "\nVyber tvar k utoku (1 - Ctverec, 2 - Obdelnik, 3 - Kruh): ";
-        std::cin >> volba;
+    while (hrac.zivoty > 0 && hlavniBoss.zivoty > 0) {
+        statistiky(hrac);
+        std::cout << "\n" << hlavniBoss.jmeno << " má " << hlavniBoss.zivoty << " životů.\n";
+        std::cout << "Vyber tvar, který Geomancer použije (1 - Čtverec, 2 - Obdélník, 3 - Kruh): ";
+        int volba = ziskejValidniVstup(1, 3);
 
         int poskozeni = 0;
-        if (volba == 1) {
-            vykresliCtverec();
-            poskozeni = zakladutokboss * 4;
-            std::cout << "Geomancer pouzil ctverec a zpusobil " << poskozeni << " poskozeni." << std::endl;
-        }
-        else if (volba == 2) {
-            vykresliObdelnik();
-            poskozeni = zakladutokboss * (2 + uroven * 2);
-            std::cout << "Geomancer pouzil obdelnik a zpusobil " << poskozeni << " poskozeni." << std::endl;
-        }
-        else if (volba == 3) {
-            vykresliKruh();
-            int nahodnaHodnota = 3;
-            poskozeni = zakladutokboss * nahodnaHodnota * 2;
-            std::cout << "Geomancer pouzil kruh (nasobeno pevnou hodnotou " << nahodnaHodnota << ") a zpusobil " << poskozeni << " poskozeni." << std::endl;
-        }
-        else {
-            std::cout << "Spatna volba, Geomancer ztratil kolo!" << std::endl;
-            poskozeni = 0;
-        }
-
-        hlavniboss.zivoty -= poskozeni;
-        if (hlavniboss.zivoty <= 0) {
-            std::cout << "Porazil jsi bosse " << hlavniboss.jmeno << "!" << std::endl;
-            return;
-        }
-        else {
-            std::cout << hlavniboss.jmeno << " ma " << hlavniboss.zivoty << " zivotu zbyva." << std::endl;
-        }
-
-        
-        hrac.zivoty -= hlavniboss.utok;
-        std::cout << hlavniboss.jmeno << " te zasahl za " << hlavniboss.utok << ". Mas " << hrac.zivoty << " zivotu." << std::endl;
-
-        if (hrac.zivoty <= 0) {
-            std::cout << "Prohral jsi proti bosssovi." << std::endl;
-            return;
-        }
-    }
-}
-
-    void les(Postava &hrac) {
-        std::string dej[16] = {
-            "souboj1", "souboj2", "souboj3", "souboj2",
-            "vesnice", "souboj1", "souboj3", "miniboss1",
-            "souboj1", "soubojminiboss2", "souboj2", "souboj3",
-            "vesnice", "soubojhlavniboss", "souboj3", "souboj2"
-
-        };
-         for (int i = 0; i < 16; i++) {
-        int pokracovat;
-        std::cout << "Krok " << i + 1 << " v lese" << std::endl;
-        std::cout << "Zadej 1 pro pokracovani4: ";
-        std::cin >> pokracovat;
-
-        if (dej[i] == "vesnice") {
-            std::cout << "Dorazil jsi do vesnice" << std::endl;
-            vesnice(hrac);
-        } else if (dej[i] == "souboj1") {
-            std::cout << "Hele jedno monstrum te vyzyva" << std::endl;
-            souboj1(hrac);
-        } else if (dej[i] == "souboj2") {
-            std::cout << "Narazil jsi na dve monstra" << std::endl;
-            souboj2(hrac);
-        } else if (dej[i] == "souboj3") {
-            std::cout << "Tri monstra jsou pred tebou" << std::endl;
-            souboj3(hrac);
-        } else if (dej[i] == "soubojminiboss1") {
-            std::cout << "Pozor objevil se pred tebou lehci mini boss" << std::endl;
-            soubojminiboss1(hrac);
-        }else if (dej[i] == "soubojminiboss2") {
-            std::cout << "Pozor objevil se pred tebou tezsi mini boss" << std::endl;
-            soubojminiboss2(hrac);
-        } else if (dej[i] == "soubojhlavniboss") {
-            std::cout << "Narazil jsi na hlavniho bosse" << std::endl;
-            soubojhlavniboss(hrac);
-            if (hrac.zivoty > 0) {
-                std::cout << "Vyhrál jsi hru! Gratulujeme!" << std::endl;
-            } else {
-                std::cout << "Zemřel jsi v boji s hlavním bossem."<< std::endl;
-                std::cout <<  "Konec hry.";
+        switch(volba) {
+            case 1: // Čtverec
+                std::cout << "****\n*  *\n*  *\n****\n";
+                poskozeni = hlavniBoss.utok * 4;
+                std::cout << "Geomancer útočí čtvercem za " << poskozeni << " poškození!\n";
+                break;
+            case 2: // Obdélník
+                std::cout << "******\n*    *\n******\n";
+                poskozeni = hlavniBoss.utok * 2 + (hrac.uroven * 2);
+                std::cout << "Geomancer útočí obdélníkem za " << poskozeni << " poškození!\n";
+                break;
+            case 3: { // Kruh
+                std::cout << " *** \n*   *\n*   *\n *** \n";
+                int nasobitel = 1 + (rand() % 3); // 1, 2, nebo 3
+                if (nasobitel == 2) nasobitel = 3; // 1, 3, nebo 4
+                else if (nasobitel == 3) nasobitel = 4;
+                poskozeni = hlavniBoss.utok * nasobitel * 2;
+                std::cout << "Geomancer útočí kruhem za " << poskozeni << " poškození! (Násobitel: " << nasobitel << ")\n";
+                break;
             }
-            break;
+        }
+
+        hrac.zivoty -= poskozeni;
+        std::cout << "Máš " << std::max(0, hrac.zivoty) << " životů.\n";
+        if (hrac.zivoty <= 0) break;
+
+
+        std::cout << "\nTvůj útok na Geomancera!\n";
+        hlavniBoss.zivoty -= hrac.silaUtoku;
+        std::cout << "Způsobil jsi " << hrac.silaUtoku << " poškození. Geomancer má nyní " << std::max(0, hlavniBoss.zivoty) << " životů.\n";
+    }
+
+    if (hrac.zivoty > 0) {
+        std::cout << "Porazil jsi bosse " << hlavniBoss.jmeno << "!\n";
+    } else {
+        std::cout << "Prohrál jsi proti bossovi.\n";
+    }
+}
+
+enum class TypUdalosti {
+    Vesnice, Souboj1, Souboj2, Souboj3, Souboj4, Souboj5, Miniboss1, Miniboss2, SoubojHavniBoss, Konec
+};
+
+void les(Postava &hrac) {
+    const std::vector<TypUdalosti> dej = {
+        TypUdalosti::Souboj1, TypUdalosti::Vesnice, TypUdalosti::Souboj2, TypUdalosti::Souboj3, TypUdalosti::Vesnice,
+        TypUdalosti::Miniboss1, TypUdalosti::Souboj2, TypUdalosti::Souboj4, TypUdalosti::Vesnice, TypUdalosti::Souboj5,
+        TypUdalosti::Miniboss2, TypUdalosti::Vesnice,  TypUdalosti::Souboj5,  TypUdalosti::Souboj2,  TypUdalosti::Souboj3,
+        TypUdalosti::Vesnice, TypUdalosti::SoubojHavniBoss, TypUdalosti::Konec
+    };
+
+    for (size_t i = 0; i < dej.size(); ++i) {
+        std::cout << "\n--- Krok " << i + 1 << " v lese ---\n";
+        std::cout << "Stiskni 1 pro pokračování: ";
+        ziskejValidniVstup(1, 1);
+
+        TypUdalosti udalost = dej[i];
+        std::vector<Monstrum> monstra;
+
+        switch (udalost) {
+            case TypUdalosti::Vesnice:
+                std::cout << "Dorazil jsi do vesnice.\n";
+                vesnice(hrac);
+                break;
+            case TypUdalosti::Souboj1:
+                std::cout << "Narazil jsi na monstrum!\n";
+                monstra.push_back({"Bomber", 5, 2, false, false});
+                souboj(hrac, monstra);
+                break;
+            case TypUdalosti::Souboj2:
+                std::cout << "Narazil jsi na dvě monstra!\n";
+                monstra.push_back({"Zmar", 8, 3, false, false});
+                monstra.push_back({"Děs", 8, 3, false, false});
+                souboj(hrac, monstra);
+                break;
+            case TypUdalosti::Souboj3:
+                std::cout << "Tři monstra jsou před tebou!\n";
+                monstra.push_back({"Zkáza", 12, 1, false, false});
+                monstra.push_back({"Bestie", 9, 4, false, false});
+                monstra.push_back({"Horda", 9, 4, false, false});
+                souboj(hrac, monstra);
+                break;
+            case TypUdalosti::Souboj4:
+                std::cout << "Dvě monstra jsou před tebou!\n";
+                monstra.push_back({"Golem", 10, 2, false, false});
+                monstra.push_back({"Zuřivec", 8, 4, false, false});
+                souboj(hrac, monstra);
+                break;
+            case TypUdalosti::Souboj5:
+                std::cout << "Dvě monstra jsou před tebou!\n";
+                monstra.push_back({"Barbar", 10, 4, false, false});
+                monstra.push_back({"Mráz", 12, 3, false, false});
+                souboj(hrac, monstra);
+                break;
+            case TypUdalosti::Miniboss1:
+                std::cout << "Pozor! Objevil se mini boss!\n";
+                monstra.push_back({"KAT", 14, 6, true, false});
+                souboj(hrac, monstra);
+                break;
+            case TypUdalosti::Miniboss2:
+                std::cout << "Pozor! Objevil se silnější mini boss!\n";
+                monstra.push_back({"TYRAN", 12, 7, true, false});
+                souboj(hrac, monstra);
+                break;
+            case TypUdalosti::SoubojHavniBoss:
+                std::cout << "Narazil jsi na hlavního bosse!\n";
+                soubojHavniBoss(hrac);
+                if (hrac.zivoty > 0) {
+                    std::cout << "\n*** Vyhrál jsi hru! Gratulujeme! ***\n";
+                } else {
+                    std::cout << "Zemřel jsi v boji s hlavním bossem.\n";
+                }
+                break;
+            case TypUdalosti::Konec:
+                std::cout << "Došel jsi do finální destinace.\n";
+                std::cout << "Tady tvoje dobrodružná výprava končí.\n";
+                std::cout << ":)\n";
+                return;
         }
 
         if (hrac.zivoty <= 0) {
-            std::cout << "Zemřel jsi." << std::endl;
-            std::cout << " Konec hry.";
-            break;
+            std::cout << "\nZemřel jsi. Konec hry.\n";
+            return;
         }
     }
 }
 
-int main () {
-    int vstup;
+std::vector<Postava> vytvorPostavy() {
+    return {
+        {"Cajda", 40, 40, 12, 12, 10, 30, 1, 0, {{"Podpásovka", 5, 1}, {"Loketní vražda", 7, 2}}},
+        {"Tufo", 40, 40, 12, 12, 10, 30, 1, 0, {{"Pohlavek", 4, 1}, {"Past", 7, 2}}},
+        {"Drátěnka", 40, 40, 12, 12, 8, 30, 1, 0, {{"Kletba", 4, 1}, {"Elektrický šok", 5, 1}}},
+        {"Mazák", 40, 40, 12, 12, 10, 30, 1, 0, {{"Rána zezadu", 6, 2}, {"Vypálení světlem", 4, 1}}}
+    };
+}
 
-    std::cout << "Vytejte ve hre plne dobrodruzstvi" << std::endl;
-    std::cout << "Tvym cilem bude projit lesem kde potkas mnoho bytosti, pres ktere se musis dostat do kralovstvi." << std::endl;
-    std::cout << "Pokud si chcete hru zahrat tak stisknete 1 pokud ne tak stisknete jakekoliv jine cislo" << std::endl;
-    std::cin >> vstup;
-
-    if(vstup != 1) {
-        std::cout << "Srabe namas odvahu projit strasidlelnym lesem tak se snad brzy uvidime." << std::endl;
+int main() {
+	// Nastaví kódovou stránku konzole pro výstup (aby se správně tisklo)
+    SetConsoleOutputCP(CP_UTF8);
+    // Volitelně: Nastaví kódovou stránku pro vstup (aby fungoval std::cin s diakritikou)
+    SetConsoleCP(CP_UTF8);
+    std::cout << "Vítejte ve hře plné dobrodružství!\n";
+    std::cout << "Tvým cílem bude projít lesem a porazit vše, co ti stojí v cestě.\n";
+    std::cout << "Přejete si hrát? (1 pro ano, 2 pro ne): ";
+    if (ziskejValidniVstup(1, 2) != 1) {
+        std::cout << "Škoda! Snad se brzy uvidíme.\n";
         return 0;
     }
-    std::cout <<"Dobre pokracujem dal" << std::endl;
-    std::cout << "Vyber si za koho chces hrat " << std::endl;
-    std::cout << "Ale pozor kazda postava ma jiny pocet energi a zivotu" << std::endl;
-    std::cout << "Postavy jsou serazeny od nejlehci po nejtezsi" << std::endl;   
 
-
-    Postava Charakter[4];
-
-    Charakter[0].jmeno = "Cajda";
-    Charakter[0].MaxZivoty = 12;
-    Charakter[0].zivoty= 12;
-    Charakter[0].MaxEnergie = 6;
-    Charakter[0].energie = 6;
-    Charakter[0].silautoku = 4;
-    Charakter[0].zlato = 0;
-    Charakter[0].uroven = 1;
-    Charakter[0].schopnosti[0] = {"podpasovka", 3, 1};
-    Charakter[0].schopnosti[1] = {"loketni vrazda", 4, 2};
-
-    Charakter[1].jmeno = "Tufo";
-    Charakter[1].MaxZivoty = 11;
-    Charakter[1].zivoty= 11;
-    Charakter[1].MaxEnergie = 6;
-    Charakter[1].energie = 6;
-    Charakter[1].silautoku = 3;
-    Charakter[1].zlato = 0;
-    Charakter[1].uroven = 1;
-    Charakter[1].schopnosti[0] = {"Pohlavek", 2, 1};
-    Charakter[1].schopnosti[1] = {"past", 4, 2};
-
-    Charakter[2].jmeno = "Dratenka";
-    Charakter[2].MaxZivoty = 10;
-    Charakter[2].zivoty= 10;
-    Charakter[2].MaxEnergie = 5;
-    Charakter[2].energie = 5;
-    Charakter[2].silautoku = 3;
-    Charakter[2].zlato = 0;
-    Charakter[2].uroven = 1;
-    Charakter[2].schopnosti[0] = {"Kledba", 2, 1};
-    Charakter[2].schopnosti[1] = {"elektricky sok", 3, 1};
-
-    Charakter[3].jmeno = "Mazak";
-    Charakter[3].MaxZivoty = 10;
-    Charakter[3].zivoty= 10;
-    Charakter[3].MaxEnergie = 4;
-    Charakter[3].energie = 4;
-    Charakter[3].silautoku = 3;
-    Charakter[3].zlato = 0;
-    Charakter[3].uroven = 1;
-    Charakter[3].schopnosti[0] = {"rana ze zadu", 3, 2};
-    Charakter[3].schopnosti[1] = {"vypaleni svetlem", 2, 1};
-
-int vyberpostavy;
-do{
-    std:: cout << "Vyber si za koho chces hrat";
-    std:: cout << ", ale pozor jak uz jsem se zminoval, tak kazda postva umi neco jineho" << std:: endl;
-    std:: cout << "Mas tedy na vyber mezi" << " : " << " 1 - Cajda,  2 - Tufo,  3 - Dratenka, 4 - Mazak" << std::endl;
-    std:: cin >> vyberpostavy;
-    } while (vyberpostavy < 1 || vyberpostavy > 4);
-    std:: cout << "Vybral sis " << Charakter[vyberpostavy - 1].jmeno << std:: endl;
-     if (std::cin.fail()) {
-        std::cin.clear();
-        std::cin.ignore(1000, '\n');
-        std::cout << "To není číslo. Zkus to znovu." << std::endl;
-    }
-    else if (vyberpostavy < 1 || vyberpostavy > 3) {
-        std::cout << "Zadal jsi špatné číslo. Zkus 1, 2 nebo 3." << std::endl;
-    }
-    else {
-        break;
+    auto postavy = vytvorPostavy();
+    std::cout << "\nVyber si, za koho chceš hrát:\n";
+    for (size_t i = 0; i < postavy.size(); ++i) {
+        std::cout << i + 1 << " - " << postavy[i].jmeno << '\n';
     }
 
+    std::cout << "Tvoje volba: ";
+    int vyberPostavy = ziskejValidniVstup(1, postavy.size());
+    Postava hrac = postavy[vyberPostavy - 1];
 
-    Postava hrace = Charakter[vyberpostavy - 1];
+    std::cout << "\nVybral sis postavu:\n";
     statistiky(hrac);
 
-    Monstrum monstra[17];
-    monstra[0].jmeno = "Bomber" ;
-    monstra[0].zivoty = 8;
-    monstra[0].utok = 2;
-    monstra[0].miniboss = false;
-    monstra[0].hlavniboss = false;
+    std::cout << "\nStojíš před strašidelným lesem. Můžeš jít rovnou do lesa, nebo navštívit vesnici pro přípravu.\n";
+    std::cout << "1 - Navštívit vesnici\n2 - Vstoupit do lesa\n";
+    std::cout << "Tvoje volba: ";
+    int vyberCesty = ziskejValidniVstup(1, 2);
 
-    monstra[1].jmeno = "Troll" ;
-    monstra[1].zivoty = 7;
-    monstra[1].utok = 3;
-    monstra[1].miniboss = false;
-    monstra[1].hlavniboss = false;
+    if (vyberCesty == 1) {
+        vesnice(hrac);
+    }
 
-    monstra[2].jmeno = "Sok" ;
-    monstra[2].zivoty = 8;
-    monstra[2].utok = 3;
-    monstra[2].miniboss = false;
-    monstra[2].hlavniboss = false;
+    std::cout << "\nVstupuješ do temného lesa... Hodně štěstí!\n";
+    les(hrac);
 
-    monstra[3].jmeno = "Golem" ;
-    monstra[3].zivoty = 8;
-    monstra[3].utok = 6;
-    monstra[3].miniboss = false;
-    monstra[3].hlavniboss = false;
-
-    monstra[4].jmeno = "Zurivec" ;
-    monstra[4].zivoty = 9;
-    monstra[4].utok = 5;
-    monstra[4].miniboss = false;
-    monstra[4].hlavniboss = false;
-
-    monstra[5].jmeno = "Barbar" ;
-    monstra[5].zivoty = 13;
-    monstra[5].utok = 4;
-    monstra[5].miniboss = false;
-    monstra[5].hlavniboss = false;
-
-    monstra[6].jmeno = "Mraz" ;
-    monstra[6].zivoty = 13;
-    monstra[6].utok = 2;
-    monstra[6].miniboss = false;
-    monstra[6].hlavniboss = false;
-
-    monstra[7].jmeno = "Des" ;
-    monstra[7].zivoty = 10;
-    monstra[7].utok = 5;
-    monstra[7].miniboss = false;
-    monstra[7].hlavniboss = false;
-
-    monstra[8].jmeno = "Zmar" ;
-    monstra[8].zivoty = 13;
-    monstra[8].utok = 3;
-    monstra[8].miniboss = false;
-    monstra[8].hlavniboss = false;
-
-    monstra[9].jmeno = "Zkaza" ;
-    monstra[9].zivoty = 15;
-    monstra[9].utok = 4;
-    monstra[9].miniboss = false;
-    monstra[9].hlavniboss = false;
-
-    monstra[10].jmeno = "Bestie" ;
-    monstra[10].zivoty = 16;
-    monstra[10].utok = 4;
-    monstra[10].miniboss = false;
-    monstra[10].hlavniboss = false;
-
-    monstra[11].jmeno = "Horda" ;
-    monstra[11].zivoty = 15;
-    monstra[11].utok = 6;
-    monstra[11].miniboss = false;
-    monstra[11].hlavniboss = false;
-
-    monstra[12].jmeno = "Drtic" ;
-    monstra[12].zivoty = 17;
-    monstra[12].utok = 5;
-    monstra[12].miniboss = false;
-    monstra[12].hlavniboss = false;
-
-    monstra[13].jmeno = "Netvor" ;
-    monstra[13].zivoty = 16;
-    monstra[13].utok = 6;
-    monstra[13].miniboss = false;
-    monstra[13].hlavniboss = false;
-
-    monstra[14].jmeno = "KAT" ;
-    monstra[14].zivoty = 19;
-    monstra[14].utok = 10;
-    monstra[14].miniboss = true;
-    monstra[14].hlavniboss = false;
-
-    monstra[15].jmeno = "TYRAN" ;
-    monstra[15].zivoty = 20;
-    monstra[15].utok = 11;
-    monstra[15].miniboss = true;
-    monstra[15].hlavniboss = false;
-
-    monstra[16].jmeno = "Geomancer" ;
-    monstra[16].zivoty = 25;
-    monstra[16].utok = 15;
-    monstra[16].miniboss = false;
-    monstra[16].hlavniboss = true;
-
-
-bool vybervarianty;
-std:: cout << "stojis pred strasidelnym lesem kde te muzou prepadnout monstra, tak doufam ze si pripravenej bojovat mas na vyber muzes navstivit vesnici s penezi co jsi nasel na zemi nebo pujdes do lesa." << std:: endl;
-std:: cout << "pro to aby jsi sel do mesta zmackni jakekoliv cislo pro to aby si sel do lesa tak zmackni 0";
-std:: cin >> vybervarianty;
-
-if(vybervarianty == 1){
-    std:: cout <<"dorazil jsi do vesnice " << std:: endl;
-    std:: cout << "co chces delat";
-    vesnice(hrac);
-}else if(vybervarianty == 0){
-    std:: cout << "pokracujes do lesa" << std:: endl;
-    les(hrace);
-}else{
-std:: cout << "zadal jsi chybnou hodnotu" << std:: endl;
-std:: cout << "zadej znova";
-}
+    return 0;
 }
